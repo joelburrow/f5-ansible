@@ -1,0 +1,12 @@
+[all:vars]
+ansible_port=22
+
+[lb]
+f5 ansible_host=54.196.24.131
+
+[control]
+ansible ansible_host=ansibletower.mford.io
+
+[webservers]
+host1 ansible_host=3.81.147.120
+host2 ansible_host=54.210.203.179

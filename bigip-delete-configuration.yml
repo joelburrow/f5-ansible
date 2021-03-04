@@ -1,0 +1,49 @@
+---
+- name: BIG-IP TEARDOWN
+  hosts: lb
+  connection: local
+  gather_facts: false
+  vars_files:
+    - ./vars/default_vars.yml
+    - ./credentials/f5_credentials.yml
+  vars:
+    pool_name: http_pool
+    vip_name: vip
+
+  tasks:
+
+  - name: DELETE VIRTUAL SERVER
+    bigip_virtual_server:
+      provider:
+        server: "{{ ansible_host }}"
+        user: "{{ F5_USERNAME }}"
+        password: "{{ F5_PASSWORD }}"
+        server_port: "8443"
+        validate_certs: "no"
+      name: "{{ vip_name }}"
+      state: absent
+
+
+  - name: DELETE POOL
+    bigip_pool:
+      provider:
+        server: "{{ ansible_host }}"
+        user: "{{ F5_USERNAME }}"
+        password: "{{ F5_PASSWORD }}"
+        server_port: "8443"
+        validate_certs: "no"
+      name: "{{ pool_name }}"
+      state: absent
+
+
+  - name: DELETE NODES
+    bigip_node:
+      provider:
+        server: "{{ ansible_host }}"
+        user: "{{ F5_USERNAME }}"
+        password: "{{ F5_PASSWORD }}"
+        server_port: "8443"
+        validate_certs: "no"
+      name: "{{hostvars[item].inventory_hostname}}"
+      state: absent
+    loop: "{{ groups['webservers'] }}"
